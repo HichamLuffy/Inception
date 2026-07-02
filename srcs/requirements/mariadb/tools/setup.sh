@@ -3,7 +3,7 @@
 MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 
-if [ ! -d "/var/lib/mysql/.initdb" ]; then
+if [ ! -d "/var/lib/mysql/.initialized" ]; then
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql
     mariadbd --user=mysql --skip-networking &
     sleep 5
@@ -20,7 +20,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
     mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
-    touch .initdb
+    touch /var/lib/mysql/.initialized
 fi
 echo "Starting MariaDB..."
 exec mariadbd --user=mysql

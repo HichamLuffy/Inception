@@ -1,1 +1,73 @@
-FROM debian:bookworm
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/mariadb
+  wp-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/wordpress
+
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
+    networks:
+      - inception
+    volumes:
+      - db-data:/var/lib/mysql
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - db_root_password
+    restart: always
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    networks:
+      - inception
+    volumes:
+      - wp-data:/var/www/html
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    depends_on:
+      - mariadb
+    restart: always
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    networks:
+      - inception
+    ports:
+      - "443:443"
+    volumes:
+      - wp-data:/var/www/html
+    depends_on:
+      - wordpress
+    restart: always
