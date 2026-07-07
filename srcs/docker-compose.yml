@@ -29,7 +29,7 @@ secrets:
 services:
   mariadb:
     build: ./requirements/mariadb
-    image: mariadb
+    image: mariadb:lts
     container_name: mariadb
     networks:
       - inception
@@ -40,10 +40,10 @@ services:
     secrets:
       - db_password
       - db_root_password
-    restart: always
+    restart: on-failure
   wordpress:
     build: ./requirements/wordpress
-    image: wordpress
+    image: wordpress:7
     container_name: wordpress
     networks:
       - inception
@@ -57,10 +57,10 @@ services:
       - wp_user_password
     depends_on:
       - mariadb
-    restart: always
+    restart: on-failure
   nginx:
     build: ./requirements/nginx
-    image: nginx
+    image: nginx:1.12.0
     container_name: nginx
     networks:
       - inception
@@ -70,4 +70,4 @@ services:
       - wp-data:/var/www/html
     depends_on:
       - wordpress
-    restart: always
+    restart: on-failure

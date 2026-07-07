@@ -9,7 +9,7 @@ RUN openssl req -x509 -nodes -days 365 \
     -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/inception.key \
     -out /etc/nginx/ssl/inception.crt \
-    -subj "/C=MA/ST=Khouribga/L=Khouribga/O=42/CN=yourlogin.42.fr"
+    -subj "/C=MA/ST=Khouribga/L=Khouribga/O=42/CN=hfhad.42.fr"
 
 COPY conf/nginx.conf /etc/nginx/conf.d/wordpress.conf
 
