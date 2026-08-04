@@ -10,7 +10,6 @@ RUN apt-get update && \
         php-zip \
         php-gd \
         php-imagick \
-        unzip \
         imagemagick \
         curl \
         default-mysql-client && \
